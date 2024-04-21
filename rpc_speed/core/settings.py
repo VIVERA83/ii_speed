@@ -77,5 +77,22 @@ class RPCSettings(Base):
 
 class ServiceSettings(Base):
     base_url: str
-    clicker_base_url: str = "http://0.0.0.0:8010"
+    analysis_report_url: str = "analysis/report/"
+    clicker_base_url: str = "http://0.0.0.0:8010/"
     tg_admin_id: int
+
+
+class YaDiskSettings(Base):
+    """Yandex Disk settings class.
+
+    Args:
+        ya_token (str): Yandex OAuth2 access token.
+        ya_client_id (str): Yandex OAuth2 client ID.
+        ya_base_dir (str, optional): Yandex Disk directory ID. Defaults to "temp_folder".
+        ya_attempt_count (int, optional): Number of attempts to download a file. Defaults to 10.
+    """
+
+    ya_token: str
+    ya_client_id: str
+    ya_base_dir: str = "ii_speed"
+    ya_attempt_count: int = 10

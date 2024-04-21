@@ -1,19 +1,18 @@
 import asyncio
 
+from app import MainApp
 from core.logger import setup_logging
 from rpc.rpc_server import RPCServer
-from speed.execute_rpc_action import execute_rpc_action
+from speed.accessor import SpeedReport
+from ya_disk.accessor import YaDiskAccessor
 
 
-def run_rpc():
-    """A function to run an RPC with the given RPCServer instance."""
-    loop = asyncio.get_event_loop()
+async def run_app():
     logger = setup_logging()
-    rpc_server = RPCServer(
-        logger=logger,
-        action=execute_rpc_action,
-    )
+    app = MainApp(YaDiskAccessor, RPCServer, SpeedReport, logger)
     try:
-        loop.run_until_complete(rpc_server.start())
-    except KeyboardInterrupt:
-        logger.info("Interrupted by user")
+        await app.start()
+    except asyncio.CancelledError:
+        ...
+    finally:
+        await app.stop()

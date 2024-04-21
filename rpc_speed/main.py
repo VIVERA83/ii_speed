@@ -1,4 +1,6 @@
-from core.setup import run_rpc
+import asyncio
+
+from core.setup import run_app
 
 if __name__ == "__main__":
-    run_rpc()
+    asyncio.run(run_app())
