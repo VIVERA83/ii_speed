@@ -11,7 +11,7 @@ from aio_pika.abc import (
     AbstractQueue,
 )
 
-from core.settings import RabbitMQSettings
+from core.settings import RabbitMQSettings, RPCSettings
 from rpc.dc import Response
 
 
@@ -25,7 +25,7 @@ class RPCServer:
         self, action, logger: logging.Logger = logging.getLogger(__name__)
     ) -> None:
         self.settings = RabbitMQSettings()
-        self.queue_name = "rpc_queue"
+        self.queue_name = RPCSettings().queue_name
         self.action = action
         self.logger = logger
         loop = asyncio.get_event_loop()
