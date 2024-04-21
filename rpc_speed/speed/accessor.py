@@ -1,9 +1,6 @@
-import re
 from datetime import datetime, timedelta
 from io import BytesIO
 from logging import Logger, getLogger
-from typing import Any, Callable, Coroutine, Literal
-from urllib.parse import urljoin
 
 from aiohttp import ClientSession
 from core.settings import ServiceSettings
@@ -16,19 +13,13 @@ from .utils import (
 
 
 class SpeedReport:
-    ACCESS_DENIED_MSG = "Access Denied. Please contact the administrator."
-    ANALYSIS_REPORT_URL = "/analysis/report/?start_date={start_date}&end_date={end_date}&kip_empty=true"
-    PATTERN = "[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])"
-
-    # settings: ServiceSettings = None
 
     def __init__(self, logger: Logger = getLogger(__name__), ):
         self.logger = logger
         self.settings = ServiceSettings()
 
     def create_request_url(self, relative_url: str, **parameters) -> str:
-        url = urljoin(self.settings.base_url, relative_url.format(**parameters))
-        return url
+        return self.settings.base_url + relative_url + "?" + "&".join([f"{k}={v}" for k, v in parameters.items()])
 
     @staticmethod
     async def make_request(url: str) -> bytes:
@@ -47,7 +38,7 @@ class SpeedReport:
             BytesIO: A stream containing the report data.
         """
         url = self.create_request_url(
-            self.ANALYSIS_REPORT_URL, start_date=start_date, end_date=end_date
+            self.settings.analysis_report_url, start_date=start_date, end_date=end_date
         )
         response = await self.make_request(url)
         return BytesIO(response)
@@ -163,75 +154,3 @@ class SpeedReport:
         start = get_first_day_of_month(end)
 
         return await self.get_report(start, end, f"report_from {start}_to_{end}.xlsx")
-
-    # def create_report_commands(self) -> list[tuple[str, str, Callable[[], Coroutine]]]:
-    #     return [
-    #         ("report_week", "Отчет за неделю", self.get_report_week),
-    #         ("report_month", "Отчет за месяц", self.get_report_month),
-    #         ("report_current_day", "Отчет за текущий день", self.get_report_week),
-    #         (
-    #             "report_current_week",
-    #             "Отчет за текущею неделю",
-    #             self.get_report_current_week,
-    #         ),
-    #         (
-    #             "report_current_month",
-    #             "Отчет за текущий месяц",
-    #             self.get_report_current_month,
-    #         ),
-    #         (
-    #             "report_last_week",
-    #             "Отчет за предыдущею неделю",
-    #             self.get_report_last_week,
-    #         ),
-    #         ("report_last_month", "Отчет за прошлый месяц", self.get_report_last_month),
-    #         # ("clear", "Очисть базу данных", self.clear_database),
-    #     ]
-    #
-    # def create_report_regex_command(
-    #         self,
-    # ) -> dict[re.Pattern, Callable[[Any], Coroutine[None, None, None]]]:
-    #     return {  # noqa
-    #         re.compile(f"/report {self.PATTERN} {self.PATTERN}"): self.get_report
-    #     }
-    # CLEAR_DATABASE_URL = "/analysis/clear_db/"
-    #
-    # def create_clear_database_url(self) -> str:
-    #     return urljoin(self.settings.base_url, self.CLEAR_DATABASE_URL)
-
-    # def check_access(self: Callable):
-    #     async def wrapper(cls: "SpeedReport", event: NewMessage.Event):
-    #         async def wrapped(*args, **kwargs):
-    #             if event.sender_id != cls.settings.tg_admin_id:
-    #                 return cls.ACCESS_DENIED_MSG
-    #             return await self(cls, *args, **kwargs)
-    #
-    #         return await wrapped()
-    #
-    #     return wrapper
-    # @check_access  # noqa
-    # async def clear_database(self) -> str:
-    #     """
-    #     Asynchronously clears the database by sending a request to the specified URL and returning the response.
-    #     """
-    #     url = self.create_request_url(self.CLEAR_DATABASE_URL)
-    #     response = await self.make_request(url)
-    #     return json.loads(response.decode("utf-8")).get("message")
-    # def check_access(func):
-    #     async def wrapper(self, *args, **kwargs):
-    #         if self.settings.access_token:
-    #             return await func(self, *args, **kwargs)
-    #         else:
-    #             return self.ACCESS_DENIED_MSG
-    #
-    #     return wrapper
-    # async def connect(self):
-    #
-    #     # self.bot_report_commands = self.create_report_commands()
-    #     # await self.app.bot.add_commands(self.bot_report_commands)
-    #     # self.app.bot.update_regex_command_handler(self.create_report_regex_command())
-    #     self.logger.info(f"{self.__class__.__name__} connected.")
-
-    # async def disconnect(self):
-    #     await self.app.bot.remove_commands(self.bot_report_commands)
-    #     self.logger.info(f"{self.__class__.__name__} disconnected.")

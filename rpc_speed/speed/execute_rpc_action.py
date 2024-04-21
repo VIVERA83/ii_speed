@@ -53,7 +53,6 @@ async def execute_rpc_action(report_type: REPORT_TYPE, start_date: str = None, e
     try:
         result = Result(course="")
         result.result.append(await execute_report(report_service, report_type, start_date, end_date))
-
     except Exception as ex:
         return json.dumps(
             Result(
