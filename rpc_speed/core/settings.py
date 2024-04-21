@@ -73,3 +73,9 @@ class RabbitMQSettings(Base):
 
 class RPCSettings(Base):
     rpc_queue_name: str
+
+
+class ServiceSettings(Base):
+    base_url: str
+    clicker_base_url: str = "http://0.0.0.0:8010"
+    tg_admin_id: int
