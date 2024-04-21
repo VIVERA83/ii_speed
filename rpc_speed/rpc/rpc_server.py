@@ -25,7 +25,7 @@ class RPCServer:
         self, action, logger: logging.Logger = logging.getLogger(__name__)
     ) -> None:
         self.settings = RabbitMQSettings()
-        self.queue_name = RPCSettings().queue_name
+        self.queue_name = RPCSettings().rpc_queue_name
         self.action = action
         self.logger = logger
         loop = asyncio.get_event_loop()

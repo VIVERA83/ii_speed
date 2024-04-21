@@ -2,7 +2,7 @@ import re
 from datetime import datetime, timedelta
 from io import BytesIO
 from logging import Logger, getLogger
-from typing import Any, Callable, Coroutine
+from typing import Any, Callable, Coroutine, Literal
 from urllib.parse import urljoin
 
 from aiohttp import ClientSession
@@ -19,11 +19,12 @@ class SpeedReport:
     ACCESS_DENIED_MSG = "Access Denied. Please contact the administrator."
     ANALYSIS_REPORT_URL = "/analysis/report/?start_date={start_date}&end_date={end_date}&kip_empty=true"
     PATTERN = "[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])"
+
     # settings: ServiceSettings = None
 
-    def __init__(self, settings: ServiceSettings, logger: Logger = getLogger(__name__)):
+    def __init__(self, logger: Logger = getLogger(__name__), ):
         self.logger = logger
-        self.settings = settings
+        self.settings = ServiceSettings()
 
     def create_request_url(self, relative_url: str, **parameters) -> str:
         url = urljoin(self.settings.base_url, relative_url.format(**parameters))
@@ -163,36 +164,36 @@ class SpeedReport:
 
         return await self.get_report(start, end, f"report_from {start}_to_{end}.xlsx")
 
-    def create_report_commands(self) -> list[tuple[str, str, Callable[[], Coroutine]]]:
-        return [
-            ("report_week", "Отчет за неделю", self.get_report_week),
-            ("report_month", "Отчет за месяц", self.get_report_month),
-            ("report_current_day", "Отчет за текущий день", self.get_report_week),
-            (
-                "report_current_week",
-                "Отчет за текущею неделю",
-                self.get_report_current_week,
-            ),
-            (
-                "report_current_month",
-                "Отчет за текущий месяц",
-                self.get_report_current_month,
-            ),
-            (
-                "report_last_week",
-                "Отчет за предыдущею неделю",
-                self.get_report_last_week,
-            ),
-            ("report_last_month", "Отчет за прошлый месяц", self.get_report_last_month),
-            # ("clear", "Очисть базу данных", self.clear_database),
-        ]
-
-    def create_report_regex_command(
-            self,
-    ) -> dict[re.Pattern, Callable[[Any], Coroutine[None, None, None]]]:
-        return {  # noqa
-            re.compile(f"/report {self.PATTERN} {self.PATTERN}"): self.get_report
-        }
+    # def create_report_commands(self) -> list[tuple[str, str, Callable[[], Coroutine]]]:
+    #     return [
+    #         ("report_week", "Отчет за неделю", self.get_report_week),
+    #         ("report_month", "Отчет за месяц", self.get_report_month),
+    #         ("report_current_day", "Отчет за текущий день", self.get_report_week),
+    #         (
+    #             "report_current_week",
+    #             "Отчет за текущею неделю",
+    #             self.get_report_current_week,
+    #         ),
+    #         (
+    #             "report_current_month",
+    #             "Отчет за текущий месяц",
+    #             self.get_report_current_month,
+    #         ),
+    #         (
+    #             "report_last_week",
+    #             "Отчет за предыдущею неделю",
+    #             self.get_report_last_week,
+    #         ),
+    #         ("report_last_month", "Отчет за прошлый месяц", self.get_report_last_month),
+    #         # ("clear", "Очисть базу данных", self.clear_database),
+    #     ]
+    #
+    # def create_report_regex_command(
+    #         self,
+    # ) -> dict[re.Pattern, Callable[[Any], Coroutine[None, None, None]]]:
+    #     return {  # noqa
+    #         re.compile(f"/report {self.PATTERN} {self.PATTERN}"): self.get_report
+    #     }
     # CLEAR_DATABASE_URL = "/analysis/clear_db/"
     #
     # def create_clear_database_url(self) -> str:
