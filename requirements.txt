@@ -1,0 +1,4 @@
+aio-pika==9.4.1
+pydantic==2.6.3
+pydantic_settings==2.2.1
+loguru==0.7.2
