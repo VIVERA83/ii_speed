@@ -1,11 +1,11 @@
 import json
 from dataclasses import asdict, dataclass, field
 from io import BytesIO
-from logging import Logger
+
 from typing import Literal
-from icecream import ic
+
 from core.logger import setup_logging
-from core.settings import ServiceSettings
+
 from speed.accessor import SpeedReport
 
 REPORT_TYPE = Literal[
