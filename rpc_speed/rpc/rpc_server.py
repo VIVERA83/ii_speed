@@ -9,7 +9,6 @@ from aio_pika.abc import (
     AbstractIncomingMessage,
     AbstractQueue,
 )
-
 from core.settings import RabbitMQSettings, RPCSettings
 from rpc.dc import Response
 
@@ -21,7 +20,7 @@ class RPCServer:
     queue: AbstractQueue
 
     def __init__(
-            self, action, logger: logging.Logger = logging.getLogger(__name__)
+        self, action, logger: logging.Logger = logging.getLogger(__name__)
     ) -> None:
         self.settings = RabbitMQSettings()
         self.queue_name = RPCSettings().rpc_queue_name
@@ -48,7 +47,7 @@ class RPCServer:
                     await self._reply_to(message, str(response).encode("utf-8"))
 
     async def _reply_to(
-            self, message: AbstractIncomingMessage, response: bytes
+        self, message: AbstractIncomingMessage, response: bytes
     ) -> None:
         await self.exchange.publish(
             Message(

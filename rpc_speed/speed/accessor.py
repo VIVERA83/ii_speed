@@ -4,6 +4,7 @@ from logging import Logger, getLogger
 
 from aiohttp import ClientSession
 from core.settings import ServiceSettings
+
 from .utils import (
     get_first_and_last_day_of_month,
     get_first_day_of_month,
@@ -14,12 +15,20 @@ from .utils import (
 
 class SpeedReport:
 
-    def __init__(self, logger: Logger = getLogger(__name__), ):
+    def __init__(
+        self,
+        logger: Logger = getLogger(__name__),
+    ):
         self.logger = logger
         self.settings = ServiceSettings()
 
     def create_request_url(self, relative_url: str, **parameters) -> str:
-        return self.settings.base_url + relative_url + "?" + "&".join([f"{k}={v}" for k, v in parameters.items()])
+        return (
+            self.settings.base_url
+            + relative_url
+            + "?"
+            + "&".join([f"{k}={v}" for k, v in parameters.items()])
+        )
 
     @staticmethod
     async def make_request(url: str) -> bytes:
@@ -44,7 +53,7 @@ class SpeedReport:
         return BytesIO(response)
 
     async def get_report(
-            self, start_date: str, end_date: str, name: str = None, *_, **__
+        self, start_date: str, end_date: str, name: str = None, *_, **__
     ) -> BytesIO:
         """
         Async function to get a report within a specific date range and assign a name to the report file.

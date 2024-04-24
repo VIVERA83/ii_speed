@@ -1,11 +1,9 @@
 import json
 from dataclasses import asdict, dataclass, field
 from io import BytesIO
-
 from typing import Literal
 
 from core.logger import setup_logging
-
 from speed.accessor import SpeedReport
 
 REPORT_TYPE = Literal[
@@ -29,10 +27,12 @@ class Result:
         return asdict(self)
 
 
-async def execute_report(report_service: SpeedReport,
-                         report_type: REPORT_TYPE,
-                         start_date: str,
-                         end_date: str) -> BytesIO:
+async def execute_report(
+    report_service: SpeedReport,
+    report_type: REPORT_TYPE,
+    start_date: str,
+    end_date: str,
+) -> BytesIO:
     if report_type == "date_range":
         return await report_service.get_report(start_date, end_date)
     elif report_type == "last_week":
@@ -47,12 +47,16 @@ async def execute_report(report_service: SpeedReport,
         raise Exception("Неизвестный тип отчёта")
 
 
-async def execute_rpc_action(report_type: REPORT_TYPE, start_date: str = None, end_date: str = None) -> str:
+async def execute_rpc_action(
+    report_type: REPORT_TYPE, start_date: str = None, end_date: str = None
+) -> str:
     logger = setup_logging()
     report_service = SpeedReport(logger)
     try:
         result = Result(course="")
-        result.result.append(await execute_report(report_service, report_type, start_date, end_date))
+        result.result.append(
+            await execute_report(report_service, report_type, start_date, end_date)
+        )
     except Exception as ex:
         return json.dumps(
             Result(

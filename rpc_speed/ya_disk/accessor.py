@@ -3,11 +3,11 @@ import logging
 from io import BytesIO
 from typing import AsyncGenerator
 
-from yadisk import AsyncClient
-from yadisk.exceptions import PathNotFoundError, PathExistsError
-from yadisk.objects import AsyncResourceObject, AsyncResourceLinkObject
-
 from core.settings import YaDiskSettings
+from yadisk import AsyncClient
+from yadisk.exceptions import PathExistsError, PathNotFoundError
+from yadisk.objects import AsyncResourceLinkObject, AsyncResourceObject
+
 from .exception import YaFileNotFound, YaTokenNotValidException
 
 
@@ -16,9 +16,9 @@ class YaDiskAccessor:
     client: AsyncClient
 
     def __init__(
-            self,
-            settings: YaDiskSettings = YaDiskSettings(),
-            logger: logging.Logger = logging.getLogger(__name__),
+        self,
+        settings: YaDiskSettings = YaDiskSettings(),
+        logger: logging.Logger = logging.getLogger(__name__),
     ) -> None:
         self.settings = settings
         self.logger = logger
@@ -63,7 +63,7 @@ class YaDiskAccessor:
         self.client = AsyncClient(
             id=self.settings.ya_client_id,
             session="aiohttp",
-            token=self.settings.ya_token
+            token=self.settings.ya_token,
         )
         await self.__setup()
         self.logger.info(f"{self.__class__.__name__} connected.")
@@ -155,7 +155,7 @@ class YaDiskAccessor:
 
     @_check_token  # noqa:
     async def upload(
-            self, file: BytesIO | bytes, file_name: str
+        self, file: BytesIO | bytes, file_name: str
     ) -> AsyncResourceLinkObject:
         """Uploads a file to Yandex Disk.
 
@@ -184,7 +184,9 @@ class YaDiskAccessor:
 
         raise ValueError(f"Please rename upload file")
 
-    async def upload_and_get_public_download_link(self, file: BytesIO | bytes, file_name: str) -> str:
+    async def upload_and_get_public_download_link(
+        self, file: BytesIO | bytes, file_name: str
+    ) -> str:
         """Uploads a file to Yandex Disk and returns its public download link.
 
         Args:
