@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 
 from app import MainApp
 from core.logger import setup_logging
@@ -12,6 +13,8 @@ async def run_app():
     app = MainApp(YaDiskAccessor, RPCServer, SpeedReport, logger)
     try:
         await app.start()
+    except Exception as e:
+        logger.error(f"Critical error: {e}\n {traceback.format_exc()}")
     except asyncio.CancelledError:
         ...
     finally:

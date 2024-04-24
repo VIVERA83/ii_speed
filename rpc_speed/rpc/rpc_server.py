@@ -67,7 +67,8 @@ class RPCServer:
         self.logger.info(f"{self.__class__.__name__} connected.")
 
     async def disconnect(self):
-        await self.connection.close()
+        if getattr(self, "connection", None):
+            await self.connection.close()
         self.logger.info(f"{self.__class__.__name__} disconnected.")
 
     async def _execute_action(self, params: bytes) -> bytes:
