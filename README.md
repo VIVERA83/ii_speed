@@ -17,3 +17,7 @@ cd rpc_speed && python main.py
 ```bash
 docker build -t vivera83/ii_speed:1 .
 ```  
+
+```bash
+docker push vivera83/ii_speed:1
+```  
