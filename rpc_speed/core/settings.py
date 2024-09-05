@@ -26,7 +26,7 @@ class Base(BaseSettings):
         """
 
         env_nested_delimiter = "__"
-        env_file = os.path.join(BASE_DIR, ".env_speed")
+        env_file = os.path.join(BASE_DIR, ".env")
         enf_file_encoding = "utf-8"
         extra = "ignore"
 
